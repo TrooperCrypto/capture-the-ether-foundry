@@ -18,6 +18,10 @@ contract TokenSaleTest is Test {
     // Use the instance of tokenSale and exploitContract
     function testIncrement() public {
         // Put your solution here
+        uint256 beforeExpolit = address(exploitContract).balance;
+        exploitContract.exploit();
+        uint256 afterExpolit = address(exploitContract).balance;        
+        console.log("got %s, remaining %s", afterExpolit - beforeExpolit, address(tokenSale).balance);
 
         _checkSolved();
     }

